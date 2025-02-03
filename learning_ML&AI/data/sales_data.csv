@@ -1,0 +1,11 @@
+OrderID,CustomerName,Age,Gender,Product,Category,Price,Quantity,Date,Region
+101,Alice Johnson,32,Female,Laptop,Electronics,800,1,2023-01-01,North
+102,Bob Smith,45,Male,Smartphone,Electronics,600,2,2023-01-02,South
+103,Carol Williams,27,Female,T-Shirt,Clothing,20,3,2023-01-03,East
+104,David Brown,36,Male,Washing Machine,Home Appliances,400,1,2023-01-04,West
+105,Emma Davis,23,Female,Sneakers,Clothing,50,2,2023-01-05,North
+106,Frank Moore,30,Male,Tablet,Electronics,300,1,2023-01-06,South
+107,Grace Taylor,29,Female,Refrigerator,Home Appliances,700,1,2023-01-07,East
+108,Henry Wilson,50,Male,Headphones,Electronics,100,4,2023-01-08,West
+109,Irene Anderson,34,Female,Chair,Furniture,150,2,2023-01-09,North
+110,John Clark,40,Male,Sofa,Furniture,500,1,2023-01-10,South
