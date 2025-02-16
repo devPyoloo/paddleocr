@@ -4,11 +4,15 @@ from flask_cors import CORS
 from PIL import Image
 import numpy as np
 import json
+import os
+
+# SAVE_CROPPED_IMAGES_FOLDER = "cropped_images"
+# os.makedirs(SAVE_CROPPED_IMAGES_FOLDER, exist_ok=True)
 
 app = Flask(__name__)
 CORS(app)
 
-ocr = PaddleOCR(use_angle_cls=True, lang='en')
+ocr = PaddleOCR(use_angle_cls=True, lang='ch')
 
 def extract_boxes_and_text(results):
     extracted_data = []
@@ -29,19 +33,27 @@ def extract_boxes_and_text(results):
 
 
 def process_image(image, regions):
-    """Extract text from predefined regions in the image."""
+    """Extract text from predefined regions in the image and save cropped images."""
     text_data = []
     
-    for region in regions:
+    for i, region in enumerate(regions):
         x, y, width, height = region['x'], region['y'], region['width'], region['height']
         cropped_image = image.crop((x, y, x + width, y + height))
+        
+        # # 🔹 Save cropped image
+        # cropped_image_path = os.path.join(SAVE_CROPPED_IMAGES_FOLDER, f"cropped_{i}.png")
+        # cropped_image.save(cropped_image_path)
+        # print(f"Saved cropped image: {cropped_image_path}")
+        
+        # Convert to numpy array for OCR
         cropped_image_np = np.array(cropped_image)
         
+        # 🔹 Run OCR
         result = ocr.ocr(cropped_image_np, cls=True)
         print(f"OCR Result: {result}")
 
         if result:
-            ocr_text_data = extract_boxes_and_text(result)  # Already modified to remove boxes
+            ocr_text_data = extract_boxes_and_text(result)
             text_data.extend(ocr_text_data)
         else:
             text_data.append({"text": "No text detected in this region"})

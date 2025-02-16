@@ -12,12 +12,7 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)  
 
-ocr = PaddleOCR(use_angle_cls=True, lang='en')
-
-# UPLOAD_DIR = "uploads"
-# os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-
+ocr = PaddleOCR(use_angle_cls=True, lang='ch')
 
 def extract_boxes_and_text(results):
     """Extract box coordinates and text from OCR results."""
