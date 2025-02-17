@@ -14,13 +14,9 @@ ocr = PaddleOCR(use_angle_cls=True, lang='ch', det_db_box_thresh=0.5, det_db_unc
 
 
 def preprocess_image(image):
-    """Preprocess image to enhance text readability."""
     image_np = np.array(image)
-
-    # Convert to grayscale
     gray = cv2.cvtColor(image_np, cv2.COLOR_RGB2GRAY)
 
-    # Apply adaptive thresholding
     processed_image = cv2.adaptiveThreshold(
         gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2
     )
@@ -32,7 +28,7 @@ def sharpen_image(image):
 
     kernel = np.array([[0, -1, 0],
                        [-1, 5, -1],
-                       [0, -1, 0]])  # Sharpening kernel
+                       [0, -1, 0]]) 
 
     sharpened = cv2.filter2D(image_np, -1, kernel)
 
@@ -44,16 +40,14 @@ def invert_colors(image):
     return Image.fromarray(inverted_image)
 
 
-
+# Extract text from the top 20% of the image (header section)
 def extract_header(image):
-    """Extract text from the top 20% of the image (header section)."""
+    
     image_width, image_height = image.size
     header_height = int(image_height * 0.20)
 
-    # Crop the header section
     header_image = image.crop((0, 0, image_width, header_height))
 
-    # Preprocess images
     processed_images = [
         header_image,
         preprocess_image(header_image),
@@ -66,10 +60,9 @@ def extract_header(image):
         img_np = np.array(img)
         result = ocr.ocr(img_np, cls=True)
 
-        # Extract only the text
         extracted_text.extend([line[1][0] for line in result[0] if len(line) > 1 and line[1]])
 
-    return list(set(extracted_text))  # Remove duplicates
+    return list(set(extracted_text)) 
 
 
 

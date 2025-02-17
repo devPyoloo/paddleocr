@@ -22,7 +22,7 @@ def extract_boxes_and_text(results):
     for result in results:
         for line in result:
             if len(line) >= 2 and isinstance(line[1], (tuple, list)):
-                box = line[0]  # 🔹 Coordinates (Remove this)
+                box = line[0]  
                 text_info = line[1]
                 if len(text_info) >= 1 and isinstance(text_info[0], str):
                     text = text_info[0]
@@ -33,22 +33,14 @@ def extract_boxes_and_text(results):
 
 
 def process_image(image, regions):
-    """Extract text from predefined regions in the image and save cropped images."""
     text_data = []
     
     for i, region in enumerate(regions):
         x, y, width, height = region['x'], region['y'], region['width'], region['height']
         cropped_image = image.crop((x, y, x + width, y + height))
         
-        # # 🔹 Save cropped image
-        # cropped_image_path = os.path.join(SAVE_CROPPED_IMAGES_FOLDER, f"cropped_{i}.png")
-        # cropped_image.save(cropped_image_path)
-        # print(f"Saved cropped image: {cropped_image_path}")
-        
-        # Convert to numpy array for OCR
         cropped_image_np = np.array(cropped_image)
         
-        # 🔹 Run OCR
         result = ocr.ocr(cropped_image_np, cls=True)
         print(f"OCR Result: {result}")
 
@@ -73,7 +65,7 @@ def extract_text_simple():
             return jsonify({"error": "Missing regions parameter"}), 400
 
         file = request.files['file']
-        regions = json.loads(request.form['regions'])  # Parse regions
+        regions = json.loads(request.form['regions']) 
         
         image = Image.open(file.stream)
         text_data = process_image(image, regions)

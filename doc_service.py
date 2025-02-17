@@ -14,8 +14,8 @@ CORS(app)
 
 ocr = PaddleOCR(use_angle_cls=True, lang='ch')
 
+ # Extract box coordinates and text from OCR results.
 def extract_boxes_and_text(results):
-    """Extract box coordinates and text from OCR results."""
     extracted_data = []
     if not results:
         return extracted_data
@@ -23,7 +23,7 @@ def extract_boxes_and_text(results):
     for result in results:
         for line in result:
             if len(line) >= 2 and isinstance(line[1], (tuple, list)):
-                box = line[0]  # Coordinates
+                box = line[0] 
                 text_info = line[1]
                 if len(text_info) >= 1 and isinstance(text_info[0], str):
                     text = text_info[0]
@@ -33,8 +33,8 @@ def extract_boxes_and_text(results):
     return extracted_data
 
 
+ # Scale region coordinates to match image dimensions.
 def scale_region(region, image_width, image_height, original_width, original_height):
-    """Scale region coordinates to match image dimensions."""
     scaling_factor_x = image_width / original_width
     scaling_factor_y = image_height / original_height
 
@@ -46,8 +46,8 @@ def scale_region(region, image_width, image_height, original_width, original_hei
     }
 
 
+# Convert OCR bounding box from cropped region back to full image coordinates.
 def convert_bounding_box_to_full_image(ocr_box, region_x, region_y):
-    """Convert OCR bounding box from cropped region back to full image coordinates."""
     full_boxes = []
     for box in ocr_box:
         full_box = [[point[0] + region_x, point[1] + region_y] for point in box]  # adjust coordinates
@@ -55,10 +55,11 @@ def convert_bounding_box_to_full_image(ocr_box, region_x, region_y):
     return full_boxes
 
 
+# Find the closest matching predefined region for an OCR bounding box.
 def find_matching_region(ocr_box, original_regions):
-    """Find the closest matching predefined region for an OCR bounding box."""
+    
+     # Calculate Intersection over Union (IoU) between two bounding boxes.
     def iou(boxA, boxB):
-        """Calculate Intersection over Union (IoU) between two bounding boxes."""
         xA = max(boxA[0][0], boxB['x'])
         yA = max(boxA[0][1], boxB['y'])
         xB = min(boxA[2][0], boxB['x'] + boxB['width'])
@@ -82,9 +83,9 @@ def find_matching_region(ocr_box, original_regions):
 
     return best_match
 
-
+# Process image regions and extract text with bounding boxes aligned to full image.
 def process_image(image, regions, original_width, original_height):
-    """Process image regions and extract text with bounding boxes aligned to full image."""
+    
     text_data = []
     for region in regions:
         scaled_region = scale_region(region, image.width, image.height, original_width, original_height)
@@ -128,7 +129,7 @@ def process_image(image, regions, original_width, original_height):
 @app.route('/extract-text', methods=['POST'])
 def extract_text():
     try:
-        # print(f"Incoming files: {request.files}")
+        # print(f"Incoming files(for debugging only): {request.files}")
         print(f"Incoming form data: {request.form}")
         
         file = request.files['file']
@@ -137,13 +138,12 @@ def extract_text():
         original_height = int(request.form['original_height'])
 
         text_data = []
-        # Open the image directly from memory
         image = Image.open(file.stream)
 
         # Process the image with OCR
         text_data = process_image(image, regions, original_width, original_height)
-        image.close()  # Ensure the file is closed after processing
-
+        image.close() 
+        
         print(f"Text Data: {text_data}")
         return jsonify({
             "message": "Text extraction successful",
